@@ -200,9 +200,9 @@ def GanaPares(manoIA, manoJug, mano):
 					return mano
 
 	elif parIA and not parJug:
-		return "IA*"
+		return "IA"
 	elif not parIA and parJug:
-		return "Jug*"
+		return "Jug"
 	else:
 		return "nadie"
 
@@ -249,9 +249,9 @@ def GanaJuego(manoIA, manoJug, mano):
 		else:
 			return "Jug"
 	elif JuegoIA > 30:
-		return "IA*"
+		return "IA"
 	elif JuegoJug > 30:
-		return "Jug*"
+		return "Jug"
 	else:
 		if JuegoIA == JuegoJug:
 			return mano

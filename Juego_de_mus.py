@@ -10,15 +10,27 @@ Cómo jugar al mus: https://es.wikipedia.org/wiki/Mus
 puntuacionIA = 0
 puntuacionJug = 0
 rondas = 1
+tantos = 30  # A cuánto hay que llegar para ganar 
+
+# Estadistica
+GrandeIA = 0
+GrandeJug = 0
+ChicaIA = 0
+ChicaJug = 0
+ParesIA = 0
+ParesJug = 0
+JuegoIA = 0
+JuegoJug = 0
 
 def final(puntJug, puntIA):
 
-	if puntJug >= 20 or puntIA >= 20:
+	if puntJug >= tantos or puntIA >= tantos:
 		return True
 	else:
 		return False
 
 while True:
+
 
 	print("------------------ RONDA " + str(rondas) + " ------------------")
 
@@ -35,14 +47,37 @@ while True:
 	print("El mano es " + mano)
 	print("Tus cartas son: " + str(manoJug))
 
+	# ESTADISTICAS:
+	Gana_Grande = GanaGrande(manoIA, manoJug, mano)
+	Gana_Chica = GanaChica(manoIA, manoJug, mano)
+	Gana_Pares = GanaPares(manoIA, manoJug, mano)
+	Gana_Juego = GanaJuego(manoIA, manoJug, mano)
+
+	if Gana_Grande == "IA":
+		GrandeIA += 1
+	elif Gana_Grande == "Jug":
+		GrandeJug += 1
+	if Gana_Chica == "IA":
+		ChicaIA += 1
+	elif Gana_Chica == "Jug":
+		ChicaJug += 1
+	if Gana_Pares == "IA":
+		ParesIA += 1
+	elif Gana_Pares == "Jug":
+		ParesJug += 1
+	if Gana_Juego == "IA":
+		JuegoIA += 1
+	elif Gana_Juego == "Jug":
+		JuegoJug += 1
+
 	# GRANDE
-	Apuesta_Grande = apostar(manoJug, manoIA, mano, puntuacionJug, puntuacionIA, "grande")
+	Apuesta_Grande = apostar(manoJug, manoIA, mano, "grande", puntuacionJug, puntuacionIA, tantos)
 	print(Apuesta_Grande)
 
 	ganador_grande = Apuesta_Grande[2]
 
 	if ganador_grande != "Jug" and ganador_grande != "IA":
-		ganador_grande = GanaGrande(manoIA, manoJug, mano)
+		ganador_grande = Gana_Grande
 
 
 	if not Apuesta_Grande[0]: # Pendiente
@@ -57,13 +92,13 @@ while True:
 			break
 
 	# CHICA
-	Apuesta_Chica = apostar(manoJug, manoIA, mano, puntuacionJug, puntuacionIA, "chica")
+	Apuesta_Chica = apostar(manoJug, manoIA, mano, "chica", puntuacionJug, puntuacionIA, tantos)
 	print(Apuesta_Chica)
 
 	ganador_Chica = Apuesta_Chica[2]
 
 	if ganador_Chica != "Jug" and ganador_Chica != "IA":
-		ganador_Chica = GanaChica(manoIA, manoJug, mano)
+		ganador_Chica = Gana_Chica
 
 
 	if not Apuesta_Chica[0]: # Pendiente
@@ -78,13 +113,13 @@ while True:
 			break
 
 	# A PARES
-	Apuesta_Pares = apostar(manoJug, manoIA, mano, puntuacionJug, puntuacionIA, "pares")
+	Apuesta_Pares = apostar(manoJug, manoIA, mano, "pares", puntuacionJug, puntuacionIA, tantos)
 	print(Apuesta_Pares)
 
 	ganador_Pares = Apuesta_Pares[2]
 
 	if ganador_Pares != "Jug" and ganador_Pares != "IA":
-		ganador_Pares = GanaPares(manoIA, manoJug, mano)
+		ganador_Pares = Gana_Pares
 
 
 	if not Apuesta_Pares[0]: # Pendiente
@@ -99,13 +134,13 @@ while True:
 			break
 
 	# A JUEGO
-	Apuesta_Juego = apostar(manoJug, manoIA, mano, puntuacionJug, puntuacionIA, "juego")
+	Apuesta_Juego = apostar(manoJug, manoIA, mano, "juego", puntuacionJug, puntuacionIA, tantos)
 	print(Apuesta_Juego)
 
 	ganador_Juego = Apuesta_Juego[2]
 
 	if ganador_Juego != "Jug" and ganador_Juego != "IA":
-		ganador_Juego = GanaJuego(manoIA, manoJug, mano)
+		ganador_Juego = Gana_Juego
 
 	if not Apuesta_Juego[0]: # Pendiente
 		if ganador_Juego == "Jug":
@@ -118,14 +153,13 @@ while True:
 			print("Cartas de la IA: " + str(manoIA))
 			break
 
-
 	# else: queda pendiente
 	print("")
 	print("Cartas de la IA: " + str(manoIA))
-	print("El ganador de la grande es: " + GanaGrande(manoIA, manoJug, mano))
-	print("El ganador de la chica es: " + GanaChica(manoIA, manoJug, mano))
-	print("El ganador de los pares es: " + GanaPares(manoIA, manoJug, mano))
-	print("El ganador de el juego es: " + GanaJuego(manoIA, manoJug, mano))
+	print("El ganador de la grande es: " + Gana_Grande)
+	print("El ganador de la chica es: " + Gana_Chica)
+	print("El ganador de los pares es: " + Gana_Pares)
+	print("El ganador de el juego es: " + Gana_Juego)
 
 	print("")
 
@@ -228,12 +262,27 @@ while True:
 	print("")
 	rondas += 1
 
-if puntuacionJug > 19:
+print("")
+if puntuacionJug >= tantos:
 	print("¡HAS GANADO!")
 else:
 	print("Has perdido... :(")
 
-# print("Prob de ganar a grande con " + str(manoIA) + " " + str(Prob_Ganar_Grande(manoIA, mano)))
-# print("Prob de ganar a chica con " + str(manoIA) + " " + str(Prob_Ganar_Chica(manoIA, mano)))
-# print("Prob de ganar a pares con " + str(manoIA) + " " + str(Prob_Ganar_Pares(manoIA, mano)))
-# print("Prob de ganar a juego/punto con " + str(manoIA) + " " + str(Prob_Ganar_Juego(manoIA, mano)))
+print("")
+
+# Damos las estadísticas de la partida
+print("ESTADISTICAS DE LA PARTIDA:")
+porcentaje_grande = GrandeJug / (GrandeIA + GrandeJug)
+porcentaje_chica = ChicaJug / (ChicaIA + ChicaJug)
+try:
+	porcentaje_pares = ParesJug / (ParesIA + ParesJug)
+except:
+	porcentaje_pares = "sin datos"
+porcentaje_juego = JuegoJug / (JuegoIA + JuegoJug)
+
+print("Porcentaje de veces que tuviste mejores cartas que la IA: ")
+print("   - En grande:", porcentaje_grande)
+print("   - En chica:", porcentaje_chica)
+print("   - En pares:", porcentaje_pares)
+print("   - En juego:", porcentaje_juego)
+
