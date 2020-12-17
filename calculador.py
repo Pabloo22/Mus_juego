@@ -264,8 +264,10 @@ def prob_ganar_grande(manoIA, mano):
 
 	rep = 10_000
 	casos_favorables = 0
+	baraja = repartir_rapido(manoIA)
+
 	for i in range(rep):
-		manoJug = repartir(1, repartir_rapido(manoIA))
+		manoJug = repartir(1, baraja)
 		ganador = ganaGrande(manoIA, manoJug, mano)
 		if ganador == "IA":
 			casos_favorables += 1
@@ -276,8 +278,10 @@ def prob_ganar_chica(manoIA, mano):
 
 	rep = 10_000
 	casos_favorables = 0
+	baraja = repartir_rapido(manoIA)
+
 	for i in range(rep):
-		manoJug = repartir(1, repartir_rapido(manoIA))
+		manoJug = repartir(1, baraja)
 		ganador = ganaChica(manoIA, manoJug, mano)
 		if ganador == "IA":
 			casos_favorables += 1
@@ -289,12 +293,13 @@ def prob_ganar_pares(manoIA, mano):
 	rep = 10_000
 	total = rep
 	casos_favorables = 0
-	
+	baraja = repartir_rapido(manoIA)
+
 	for i in range(rep):
 
-		manoJug = repartir(1, repartir_rapido(manoIA))
+		manoJug = repartir(1, baraja)
 		while not devuelve_par(manoJug):
-			manoJug = repartir(1, repartir_rapido(manoIA))
+			manoJug = repartir(1, baraja)
 
 		ganador = ganaPares(manoIA, manoJug, mano)
 
@@ -308,13 +313,14 @@ def prob_ganar_juego(manoIA, mano):
 
 	JuegoIA = contar_juego(manoIA)
 	rep = 10_000
+	baraja = repartir_rapido(manoIA)
+
 	if JuegoIA > 30: 
 		casos_favorables = 0
-		baraja = repartir_rapido(manoIA)
 		for i in range(rep):
-			manoJug = repartir(1, bara)
+			manoJug = repartir(1, baraja)
 			while contar_juego(manoJug) <= 30:
-				manoJug = repartir(1, repartir_rapido(manoIA))
+				manoJug = repartir(1, baraja)
 			ganador = ganaJuego(manoIA, manoJug, mano)
 
 			if ganador == "IA":
