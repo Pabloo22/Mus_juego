@@ -3,9 +3,6 @@ from IA import *
 from random import random, choice
 from typing import Tuple
 
-"""
-Tras realizar una apuesta el contador sube o se queda pendiente de ser actualizado según si se ha pasado o si se ha visto un órdago (contador sube), o si se ha visto una apuesta n o se ha dejado en paso (pendiente).
-"""
 
 def ApuestaJug(apostado) -> "pasar" or "ver" or "ordago" or int:
 	# Esta función pide una apuesta al jugador. Tiene en cuenta lo apostado previamente para hacer las preguntas correctas.
