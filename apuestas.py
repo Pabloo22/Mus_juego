@@ -282,6 +282,6 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos) \
 		elif apuestaIA == "ordago":
 			return ordago("IA", apuestaJug, apostado)
 
-		# OPCIÓN 3: apuesta numerica vs apuesta numerica
+		# OPCIÓN 3: apuesta numerica
 		else:
 			return apuesta_n(manoIA, mano, apostado, apuestaIA, "IA", apuestaJug, lance, puntuacionJug, puntuacionIA, tantos)
