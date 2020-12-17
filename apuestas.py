@@ -1,13 +1,13 @@
 from calculador import *
 from IA import *
 from random import random, choice
-
+from typing import Tuple
 
 """
 Tras realizar una apuesta el contador sube o se queda pendiente de ser actualizado según si se ha pasado o si se ha visto un órdago (contador sube), o si se ha visto una apuesta n o se ha dejado en paso (pendiente).
 """
 
-def ApuestaJug(apostado):
+def ApuestaJug(apostado) -> "pasar" or "ver" or "ordago" or int:
 	# Esta función pide una apuesta al jugador. Tiene en cuenta lo apostado previamente para hacer las preguntas correctas.
 	# Devuelve lo que el jugador ha apostado. 
 	pasar = 0
@@ -23,7 +23,7 @@ def ApuestaJug(apostado):
 			return "ver"
 		else: # Quiere pasar
 			return "pasar"
-	elif apostado == 1: # No ha habido apuesta anterior -> no se puede ver
+	elif apostado == 0 or apostado == "pasar": # No ha habido apuesta anterior -> no se puede ver
 		# ¿pasa?
 		while pasar != 1 and pasar != 2:
 			try:
@@ -43,9 +43,11 @@ def ApuestaJug(apostado):
 				return "ordago"
 			else: # No quiere ordago, solo apostar
 				apuesta = 0
-				while apuesta == 0:
+				while apuesta < 2:
 					try:
-						apuesta = int(input(f"(Apuesta actual: 1)¿Cuánto desa subir la apuesta? "))
+						apuesta = int(input(f"¿Cuánto desea apostar? "))
+						if apuesta == 1:
+							print("¡Al menos debes apostar 2!")
 					except:
 						pass
 				return apuesta
@@ -100,7 +102,9 @@ def ordago(jugador1, apuesta2, apostado):
 	else:
 		return pendiente, 100, "ordago"
 
-def apuesta_n(manoIA, mano: str, apostado, nueva_apuesta, apostador: str, respuesta, lance, puntuacionJug, puntuacionIA, tantos):
+def apuesta_n(manoIA, mano: str, apostado, nueva_apuesta, apostador: str, \
+	respuesta, lance, puntuacionJug, puntuacionIA, tantos) \
+	-> Tuple[bool, int, "IA" or "Jug" or "nadie" or "pendiente" or "ordago"]:
 	"""
 	Esta función tiene en cuenta la apuesta previa, la apuesta n a la que se ha subido la anterior y quién ha sido el que ha subido a la apuesta.
 	Además necesita manoIA y mano para calcular la nueva apuesta de la IA.
@@ -147,7 +151,8 @@ def apuesta_n(manoIA, mano: str, apostado, nueva_apuesta, apostador: str, respue
 			apuestaJug += nueva_apuesta
 			return apuesta_n(manoIA, mano, nueva_apuesta, apuestaJug, "Jug", Apuesta_IA(manoIA, apuestaJug, mano, lance, puntuacionJug, puntuacionIA, tantos), lance, puntuacionJug, puntuacionIA, tantos) 
 
-def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
+def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos) \
+	-> Tuple[bool, int, "IA" or "Jug" or "nadie" or "pendiente" or "ordago"]:
 	"""
 	Es la función principal de las apuestas y a la que llamaremos en el archivo Juego_de_mus.py 
 	Devuelve una lista de 3 elementos: [¿pendiente?, apostado, ganador] el primero es de tipo boolean que indica si se deben sumar ya los puntos o no. El segundo son los puntos que se deben sumar al ganador y el tercero es el ganador (en caso de no verse la apuesta)
@@ -156,8 +161,8 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
 	ESQUEMA:
 	Opción 1, Pasar: 
 		pasar --> se acaba el bucle
-		apuesta n --> continua el bucle... (Opción 2)
-		órdago --> ordago()
+		apuesta n --> continua el bucle... (Opción 3)
+		órdago --> ordago() (Opción 2)
 	Opción 2, Órdago:
 		ordago()
 	Opción 3, apuesta n:
@@ -166,7 +171,8 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
 		órdago --> ordago()
 		apuesta n --> Se repite el bucle.
 	"""
-	apostado = 1
+	
+	apostado = 0
 	print("")
 	if lance == "grande":
 		print("A GRANDE: ")
@@ -182,7 +188,7 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
 			print("La IA no tiene pares")
 			if not parJug:
 				print("Tú tampoco tienes pares")
-				return True, 0, "n/a"
+				return True, 0, "nadie"
 			else:
 				return True, 0, "Jug"
 		else:
@@ -195,8 +201,8 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
 
 	else:
 		print("A JUEGO:")
-		JuegoIA = Contar_Juego(manoIA)
-		JuegoJug = Contar_Juego(manoJug)
+		JuegoIA = contar_juego(manoIA)
+		JuegoJug = contar_juego(manoJug)
 
 		if JuegoIA < 31:
 			print("La IA no tiene juego")
@@ -219,14 +225,12 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
 		# Apuesta el jugador
 		apuestaJug = ApuestaJug(apostado)
 
-		if type(apuestaJug) == int:
-			apuestaJug += apostado # Ej: apuestaJug = 1+1 = 2
-
 		# Apuesta la IA
 		apuestaIA = Apuesta_IA(manoIA, apuestaJug, mano, lance, puntuacionJug, puntuacionIA, tantos)
-
-		# OPCIÓN 1:
+		apostado = 1
+		# OPCIÓN 1: pasar
 		if apuestaJug == "pasar":
+			
 
 			if apuestaIA == "pasar":
 				pendiente = True
@@ -246,7 +250,7 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
 		elif apuestaJug == "ordago":
 			return ordago("Jug", apuestaIA, apostado)
 
-		# OPCIÓN 3: apuesta numerica
+		# OPCIÓN 3: apuesta numerica vs apuesta numerica
 		else:
 			return apuesta_n(manoIA, mano, apostado, apuestaJug, "Jug", apuestaIA, lance, puntuacionJug, puntuacionIA, tantos)
 			
@@ -255,16 +259,14 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
 		
 		# Apuesta la IA
 		apuestaIA = Apuesta_IA(manoIA, apostado, mano, lance, puntuacionJug, puntuacionIA, tantos)
-		if type(apuestaIA) == int:
-			apuestaIA += apostado # Ej: apuestaJug = 1+1 = 2
 
 		# Apuesta el jugador
 		apuestaJug = ApuestaJug(apuestaIA)
-		if type(apuestaJug) == int:
-			apuestaJug += apostado # Ej: apuestaJug = 1+1 = 2
 
+		apostado = 1
 		# OPCIÓN 1:
 		if apuestaIA == "pasar":
+			
 
 			if apuestaJug == "pasar":
 				pendiente = True
@@ -277,13 +279,12 @@ def apostar(manoJug, manoIA, mano, lance, puntuacionJug, puntuacionIA, tantos):
 				return ordago("Jug", apuestaIA, apostado)
 				
 			else: # apuesta numerica
-				apuestaJug += apostado
 				return apuesta_n(manoIA, mano, apostado, apuestaJug, "Jug", Apuesta_IA(manoIA, apostado, mano, lance, puntuacionJug, puntuacionIA, tantos), lance, puntuacionJug, puntuacionIA, tantos)
 
 		# OPCIÓN 2: ordago
 		elif apuestaIA == "ordago":
 			return ordago("IA", apuestaJug, apostado)
 
-		# OPCIÓN 3: apuesta numerica
+		# OPCIÓN 3: apuesta numerica vs apuesta numerica
 		else:
 			return apuesta_n(manoIA, mano, apostado, apuestaIA, "IA", apuestaJug, lance, puntuacionJug, puntuacionIA, tantos)

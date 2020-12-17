@@ -2,7 +2,10 @@ from calculador import *
 from apuestas import *
 
 """
-El juego original es para 4 jugadores. En este programa, para más simplicidad, y poder así ser jugable por un único jugador, el juego es por ahora jugable únicamente por 1 jugador vs la IA.
+El juego original es para 4 jugadores. 
+En este programa, para más simplicidad, y poder así ser 
+jugable por un único jugador, el juego es por ahora 
+jugable únicamente por 1 jugador vs la IA.
 
 Cómo jugar al mus: https://es.wikipedia.org/wiki/Mus
 """
@@ -10,7 +13,8 @@ Cómo jugar al mus: https://es.wikipedia.org/wiki/Mus
 puntuacionIA = 0
 puntuacionJug = 0
 rondas = 1
-tantos = 30  # A cuánto hay que llegar para ganar 
+tantos = 30  # A cuánto hay que llegar para ganar
+tantos = int(input("¿A cuántos puntos desea jugar? ")) 
 
 # Estadistica
 GrandeIA = 0
@@ -34,7 +38,7 @@ while True:
 
 	print("------------------ RONDA " + str(rondas) + " ------------------")
 
-	manos = repartir(2)
+	manoIA, manoJug = repartir(2)
 
 	 # Par->mano = Jug; Impar->mano = IA
 	if rondas%2 == 0:
@@ -42,32 +46,30 @@ while True:
 	else:
 		mano = "IA"
 
-	manoIA = manos[0]
-	manoJug = manos[1]
 	print("El mano es " + mano)
 	print("Tus cartas son: " + str(manoJug))
 
 	# ESTADISTICAS:
-	Gana_Grande = GanaGrande(manoIA, manoJug, mano)
-	Gana_Chica = GanaChica(manoIA, manoJug, mano)
-	Gana_Pares = GanaPares(manoIA, manoJug, mano)
-	Gana_Juego = GanaJuego(manoIA, manoJug, mano)
+	gana_grande = ganaGrande(manoIA, manoJug, mano)
+	gana_chica = ganaChica(manoIA, manoJug, mano)
+	gana_pares = ganaPares(manoIA, manoJug, mano)
+	gana_juego = ganaJuego(manoIA, manoJug, mano)
 
-	if Gana_Grande == "IA":
+	if gana_grande == "IA":
 		GrandeIA += 1
-	elif Gana_Grande == "Jug":
+	elif gana_grande == "Jug":
 		GrandeJug += 1
-	if Gana_Chica == "IA":
+	if gana_chica == "IA":
 		ChicaIA += 1
-	elif Gana_Chica == "Jug":
+	elif gana_chica == "Jug":
 		ChicaJug += 1
-	if Gana_Pares == "IA":
+	if gana_pares == "IA":
 		ParesIA += 1
-	elif Gana_Pares == "Jug":
+	elif gana_pares == "Jug":
 		ParesJug += 1
-	if Gana_Juego == "IA":
+	if gana_juego == "IA":
 		JuegoIA += 1
-	elif Gana_Juego == "Jug":
+	elif gana_juego == "Jug":
 		JuegoJug += 1
 
 	# GRANDE
@@ -77,7 +79,7 @@ while True:
 	ganador_grande = Apuesta_Grande[2]
 
 	if ganador_grande != "Jug" and ganador_grande != "IA":
-		ganador_grande = Gana_Grande
+		ganador_grande = gana_grande
 
 
 	if not Apuesta_Grande[0]: # Pendiente
@@ -92,21 +94,21 @@ while True:
 			break
 
 	# CHICA
-	Apuesta_Chica = apostar(manoJug, manoIA, mano, "chica", puntuacionJug, puntuacionIA, tantos)
-	print(Apuesta_Chica)
+	apuesta_chica = apostar(manoJug, manoIA, mano, "chica", puntuacionJug, puntuacionIA, tantos)
+	print(apuesta_chica)
 
-	ganador_Chica = Apuesta_Chica[2]
+	ganador_Chica = apuesta_chica[2]
 
 	if ganador_Chica != "Jug" and ganador_Chica != "IA":
-		ganador_Chica = Gana_Chica
+		ganador_Chica = gana_chica
 
 
-	if not Apuesta_Chica[0]: # Pendiente
+	if not apuesta_chica[0]: # Pendiente
 		if ganador_Chica == "Jug":
-			puntuacionJug += Apuesta_Chica[1]
+			puntuacionJug += apuesta_chica[1]
 			print(f"Tu puntuación ha subido a: {puntuacionJug}")
 		else:
-			puntuacionIA += Apuesta_Chica[1]
+			puntuacionIA += apuesta_chica[1]
 			print(f"La puntuación de la IA ha subido a: {puntuacionIA}")
 		if final(puntuacionJug, puntuacionIA):
 			print("Cartas de la IA: " + str(manoIA))
@@ -119,7 +121,7 @@ while True:
 	ganador_Pares = Apuesta_Pares[2]
 
 	if ganador_Pares != "Jug" and ganador_Pares != "IA":
-		ganador_Pares = Gana_Pares
+		ganador_Pares = gana_pares
 
 
 	if not Apuesta_Pares[0]: # Pendiente
@@ -140,7 +142,7 @@ while True:
 	ganador_Juego = Apuesta_Juego[2]
 
 	if ganador_Juego != "Jug" and ganador_Juego != "IA":
-		ganador_Juego = Gana_Juego
+		ganador_Juego = gana_juego
 
 	if not Apuesta_Juego[0]: # Pendiente
 		if ganador_Juego == "Jug":
@@ -156,10 +158,10 @@ while True:
 	# else: queda pendiente
 	print("")
 	print("Cartas de la IA: " + str(manoIA))
-	print("El ganador de la grande es: " + Gana_Grande)
-	print("El ganador de la chica es: " + Gana_Chica)
-	print("El ganador de los pares es: " + Gana_Pares)
-	print("El ganador de el juego es: " + Gana_Juego)
+	print("El ganador de la grande es: " + gana_grande)
+	print("El ganador de la chica es: " + gana_chica)
+	print("El ganador de los pares es: " + gana_pares)
+	print("El ganador de el juego es: " + gana_juego)
 
 	print("")
 
@@ -177,13 +179,13 @@ while True:
 			print("Cartas de la IA: " + str(manoIA))
 			break
 	# Chica:
-	if Apuesta_Chica[0]: 
+	if apuesta_chica[0]: 
 		print("Tantos pendientes a CHICA:")
 		if ganador_Chica == "Jug":
-			puntuacionJug += Apuesta_Chica[1]
+			puntuacionJug += apuesta_chica[1]
 			print(f"Tu puntuación ha subido a: {puntuacionJug}")
 		else: 
-			puntuacionIA += Apuesta_Chica[1]
+			puntuacionIA += apuesta_chica[1]
 			print(f"La puntuación de la IA ha subido a: {puntuacionIA}")
 		if final(puntuacionJug, puntuacionIA):
 			print("Cartas de la IA: " + str(manoIA))
@@ -224,13 +226,13 @@ while True:
 	if Apuesta_Juego[0]:  # Si quedaba pendiente
 		print("Tantos pendientes a JUEGO:")
 		if ganador_Juego == "Jug":
-			ExtraJug = tanteo_juego(Contar_Juego(manoJug))
+			ExtraJug = tanteo_juego(contar_juego(manoJug))
 			print("Por el juego/punto:", ExtraJug)
 			puntuacionJug += ExtraJug
 			puntuacionJug += Apuesta_Juego[1]
 			print(f"Tu puntuación ha subido a: {puntuacionJug}")
 		elif ganador_Juego == "IA": 
-			ExtraIA = tanteo_juego(Contar_Juego(manoIA))
+			ExtraIA = tanteo_juego(contar_juego(manoIA))
 			print("Por el juego/punto:", ExtraIA)
 			puntuacionIA += ExtraIA
 			puntuacionIA += Apuesta_Juego[1]
@@ -243,12 +245,12 @@ while True:
 	else: 
 		print("Tantos pendientes a JUEGO:")
 		if ganador_Juego == "Jug":
-			ExtraJug = tanteo_juego(Contar_Juego(manoJug))
+			ExtraJug = tanteo_juego(contar_juego(manoJug))
 			print("Por el juego/punto:", ExtraJug)
 			puntuacionJug += ExtraJug
 			print(f"Tu puntuación ha subido a: {puntuacionJug}")
 		elif ganador_Juego == "IA": 
-			ExtraIA = tanteo_juego(Contar_Juego(manoIA))
+			ExtraIA = tanteo_juego(contar_juego(manoIA))
 			print("Por el juego/punto:", ExtraIA)
 			puntuacionIA += ExtraIA
 			print(f"La puntuación de la IA ha subido a: {puntuacionIA}")

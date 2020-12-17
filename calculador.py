@@ -1,61 +1,61 @@
-from random import choice, sample
+from random import shuffle, choice
+from typing import List, Tuple
 
-def repartir(n_jugadores):
-	# Creamos la baraja
-	baraja = ["R" for i in range(8)]
+BARAJA = ["R", "R", "R", "R", "R", "R", "R", "R",
+		1, 1, 1, 1, 1, 1, 1, 1,
+		4, 4, 4, 4,
+		5, 5, 5, 5,
+		6, 6, 6, 6,
+		7, 7, 7, 7,
+		"S", "S", "S", "S",
+		"C", "C", "C", "C"]
 
-	for i  in range(8):
-		baraja.append(1)
-	for i  in range(4):
-		baraja.append("C")
-		baraja.append("S")
-		baraja.append(7)
-		baraja.append(6)
-		baraja.append(5)
-		baraja.append(4)
-	# Hay ocho reyes y ocho pitos (1's). No hay doses ni treses.
+def repartir_rapido(cartasIA):
+	"""
+	Este generador está explicitamente creada para cuando la IA
+	calcula las probabilidades de ganar. De esta forma es mucho
+	más rápido y eficiente el programa.
+	"""
+	while True:
+		# Creamos la baraja
+		baraja = BARAJA.copy()
+		for c in cartasIA:
+			baraja.remove(c)
 
-	# Repartimos las cartas
-	mano1 = [baraja.pop(choice([carta for carta in range(len(baraja))])), 
-			 baraja.pop(choice([carta for carta in range(len(baraja))])), 
-			 baraja.pop(choice([carta for carta in range(len(baraja))])), 
-			 baraja.pop(choice([carta for carta in range(len(baraja))]))]
+		yield baraja.pop(choice([i for i in range(len(baraja))]))
 
-	if n_jugadores == 1: # El nº es 1 cuando la IA juega contra sí misma en el cálculo de la probabilidad
+def repartir(n_jugadores, baraja=BARAJA.copy()) -> Tuple[list]:
+
+		# El nº es 1 cuando la IA juega contra sí misma en el cálculo de la probabilidad
+	if n_jugadores == 1: 
+		mano1 = [next(baraja) for _ in range(4)]
 		return mano1
 
-	mano2 = [baraja.pop(choice([carta for carta in range(len(baraja))])), 
-			baraja.pop(choice([carta for carta in range(len(baraja))])), 
-			baraja.pop(choice([carta for carta in range(len(baraja))])), 
-			baraja.pop(choice([carta for carta in range(len(baraja))]))]
-
-	if n_jugadores == 4:
-		mano3 = [baraja.pop(choice([carta for carta in range(len(baraja))])), 
-				baraja.pop(choice([carta for carta in range(len(baraja))])), 
-				baraja.pop(choice([carta for carta in range(len(baraja))])), 
-				baraja.pop(choice([carta for carta in range(len(baraja))]))]
-		mano4 = [baraja.pop(choice([carta for carta in range(len(baraja))])), 
-				baraja.pop(choice([carta for carta in range(len(baraja))])), 
-				baraja.pop(choice([carta for carta in range(len(baraja))])), 
-				baraja.pop(choice([carta for carta in range(len(baraja))]))]
-		return mano1, mano2, mano3, mano4
 	else:
+		# Barajeamos:
+		shuffle(baraja)
+
+		# Repartimos las cartas
+		mano1 = baraja[:4]
+		mano2 = baraja[4:8]
+
 		return mano1, mano2
 
 
-Valor = {"R":8, "C":7, "S":6, 7:5, 6:4, 5:3, 4:2, 1:1} # Se declaran fuera porque son los mismos para grande que para chica
+# Se declaran fuera porque son los mismos para grande que para chica
+Valor = {"R": 8, "C": 7, "S": 6, 7: 5, 6: 4, 5: 3, 4: 2, 1: 1} 
 
 def insertion_sort(lista):
-		for j in range(1, len(lista)):
-			key = lista[j]
-			i = j - 1
-			while i >= 0 and lista[i] < key:
-				lista[i+1] = lista[i]
-				i -= 1
-			lista[i+1] = key
-		return lista
+	for j in range(1, len(lista)):
+		key = lista[j]
+		i = j - 1
+		while i >= 0 and lista[i] < key:
+			lista[i+1] = lista[i]
+			i -= 1
+		lista[i+1] = key
+	return lista
 
-def ordenar(mano):
+def ordenar(mano) -> List[int]:
 	# Cambiamos la lista de cartas por su valor (orden de victoria)
 	valores = []
 	for n in range(4):
@@ -63,7 +63,7 @@ def ordenar(mano):
 
 	return insertion_sort(valores)
 
-def GanaGrande(manoIA, manoJug, mano):
+def ganaGrande(manoIA, manoJug, mano) -> "IA" or "Jug":
 
 	valoresIA = ordenar(manoIA)
 	valoresJug = ordenar(manoJug)
@@ -93,7 +93,7 @@ def GanaGrande(manoIA, manoJug, mano):
 	else: 
 		return mano # A empate gana quien sea mano
 
-def GanaChica(manoIA, manoJug, mano):
+def ganaChica(manoIA, manoJug, mano) -> "IA" or "Jug":
 
 	valoresIA = ordenar(manoIA)
 	valoresJug = ordenar(manoJug)
@@ -126,10 +126,10 @@ def GanaChica(manoIA, manoJug, mano):
     
 def devuelve_par(mano):
 	""" Retornos:
-	No par --> False
-	par --> 2
-	medias --> 3
-	duples --> 4
+	No par -> False
+	par -> 1
+	medias -> 2
+	duples -> 3
 	"""
 	valores_mano = ordenar(mano)
 	veces = [valores_mano.count(valores_mano[i]) for i in range(len(valores_mano))]
@@ -147,7 +147,7 @@ def devuelve_par(mano):
 	else:
 		return 1
 
-def GanaPares(manoIA, manoJug, mano): 
+def ganaPares(manoIA, manoJug, mano) -> "IA" or "Jug": 
     
 	valoresIA = ordenar(manoIA) # [8, 8, 1, 1]
 	valoresJug = ordenar(manoJug)
@@ -206,7 +206,7 @@ def GanaPares(manoIA, manoJug, mano):
 	else:
 		return "nadie"
 
-def Contar_Juego(mano):
+def contar_juego(mano) -> int:
 	Valores = {"R": 10, "C":10,"S": 10, 7:7, 6:6, 5:5, 4:4, 1:1}
 
 	valores_mano = []
@@ -218,7 +218,7 @@ def Contar_Juego(mano):
 		Juego += valor
 	return Juego
 
-def tanteo_juego(juego):
+def tanteo_juego(juego) -> 1 or 2 or 3:
 	if juego > 30:
 		if juego == 31:
 			return 3
@@ -227,10 +227,10 @@ def tanteo_juego(juego):
 	else:
 		return 1
 
-def GanaJuego(manoIA, manoJug, mano):
+def ganaJuego(manoIA, manoJug, mano) -> "IA" or "Jug":
 
-	JuegoIA = Contar_Juego(manoIA)
-	JuegoJug = Contar_Juego(manoJug)
+	JuegoIA = contar_juego(manoIA)
+	JuegoJug = contar_juego(manoJug)
 
 	if JuegoIA > 30 and JuegoJug > 30:
 
@@ -260,43 +260,43 @@ def GanaJuego(manoIA, manoJug, mano):
 		else:
 			return "Jug"
 
-def Prob_Ganar_Grande(manoIA, mano):
+def prob_ganar_grande(manoIA, mano):
 
-	rep = 100000
+	rep = 10_000
 	casos_favorables = 0
 	for i in range(rep):
-		manoJug = repartir(1)
-		ganador = GanaGrande(manoIA, manoJug, mano)
+		manoJug = repartir(1, repartir_rapido(manoIA))
+		ganador = ganaGrande(manoIA, manoJug, mano)
 		if ganador == "IA":
 			casos_favorables += 1
 
 	return casos_favorables/rep
 
-def Prob_Ganar_Chica(manoIA, mano):
+def prob_ganar_chica(manoIA, mano):
 
-	rep = 100000
+	rep = 10_000
 	casos_favorables = 0
 	for i in range(rep):
-		manoJug = repartir(1)
-		ganador = GanaChica(manoIA, manoJug, mano)
+		manoJug = repartir(1, repartir_rapido(manoIA))
+		ganador = ganaChica(manoIA, manoJug, mano)
 		if ganador == "IA":
 			casos_favorables += 1
 
 	return casos_favorables/rep
 
-def Prob_Ganar_Pares(manoIA, mano):
+def prob_ganar_pares(manoIA, mano):
 
-	rep = 50000
+	rep = 10_000
 	total = rep
 	casos_favorables = 0
 	
 	for i in range(rep):
 
-		manoJug = repartir(1)
+		manoJug = repartir(1, repartir_rapido(manoIA))
 		while not devuelve_par(manoJug):
-			manoJug = repartir(1)
+			manoJug = repartir(1, repartir_rapido(manoIA))
 
-		ganador = GanaPares(manoIA, manoJug, mano)
+		ganador = ganaPares(manoIA, manoJug, mano)
 
 		if ganador == "IA":
 			casos_favorables += 1
@@ -304,61 +304,36 @@ def Prob_Ganar_Pares(manoIA, mano):
 	return casos_favorables/total
 
 
-def Prob_Ganar_Juego(manoIA, mano):
+def prob_ganar_juego(manoIA, mano):
 
-	JuegoIA = Contar_Juego(manoIA)
-	rep = 50000
+	JuegoIA = contar_juego(manoIA)
+	rep = 10_000
 	if JuegoIA > 30: 
 		casos_favorables = 0
+		baraja = repartir_rapido(manoIA)
 		for i in range(rep):
-			manoJug = repartir(1)
-			while Contar_Juego(manoJug) <= 30:
-				manoJug = repartir(1)
-			ganador = GanaJuego(manoIA, manoJug, mano)
+			manoJug = repartir(1, bara)
+			while contar_juego(manoJug) <= 30:
+				manoJug = repartir(1, repartir_rapido(manoIA))
+			ganador = ganaJuego(manoIA, manoJug, mano)
 
 			if ganador == "IA":
 				casos_favorables += 1
 	else:
 		casos_favorables = 0
+		baraja = repartir_rapido(manoIA)
 		for i in range(rep):
-			manoJug = repartir(1)
-			while Contar_Juego(manoJug) > 30:
-				manoJug = repartir(1)
+			manoJug = repartir(1, baraja)
+			while contar_juego(manoJug) > 30:
+				manoJug = repartir(1, baraja)
 
-			ganador = GanaJuego(manoIA, manoJug, mano)
+			ganador = ganaJuego(manoIA, manoJug, mano)
 
-			if ganador == "IA (punto)":
+			if ganador == "IA":
 				casos_favorables += 1
 
 	return casos_favorables/rep
 
-
-
-
-
-
-	
-
-
-
-
-
-	
-
-
-	# for carta in manoIA:
-
-	# 	veces = manoIA.count(carta)
-
-	# 	if veces == 2:
-
-	# 		parIA = True
-	# 		carta_parIA = carta
-
-	# 	elif veces == 3:
-
-	# 		mediasIA == 3:
-	# 		carta_par
 
 
 
