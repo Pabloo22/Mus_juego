@@ -207,11 +207,11 @@ def ganaPares(manoIA, manoJug, mano) -> "IA" or "Jug":
 		return "nadie"
 
 def contar_juego(mano) -> int:
-	Valores = {"R": 10, "C":10,"S": 10, 7:7, 6:6, 5:5, 4:4, 1:1}
+	VALORES = {"R": 10, "C": 10, "S": 10, 7: 7, 6: 6, 5: 5, 4: 4, 1: 1}
 
 	valores_mano = []
 	for n in range(4):
-		valores_mano.append(Valores[mano[n]])
+		valores_mano.append(VALORES[mano[n]])
 
 	Juego = 0
 	for valor in valores_mano:
