@@ -1,4 +1,4 @@
-from random import shuffle, choice
+from random import shuffle
 from typing import List, Tuple
 
 BARAJA = ["R", "R", "R", "R", "R", "R", "R", "R",
