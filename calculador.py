@@ -21,8 +21,11 @@ def repartir_rapido(cartasIA):
 		baraja = BARAJA.copy()
 		for c in cartasIA:
 			baraja.remove(c)
-
-		yield baraja.pop(choice([i for i in range(len(baraja))]))
+		
+		shuffle(baraja)
+		
+		for c in baraja:
+			yield c
 
 def repartir(n_jugadores, baraja=BARAJA.copy()) -> Tuple[list]:
 
